@@ -18,20 +18,28 @@
 ## 1) look for working directory and create if not exist
 
 mergeandtidy <- function (){
-
+    ## 2) look for data files
     if (!file.exists("./UCI HAR Dataset")) {
+        
+        ## 2a) If not, download them
         message ("Data directory not found ...  Downloading and extracting raw data")
         if (download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./ucihardata.zip", mode = "wb")){
             message ("Could not not download data file ... exiting")
             return (0)
         }
+    
+        
+        ## 2b) extract raw data files
         else {
             message ("Extracting data...")
             unzip ("./ucihardata.zip")
         }
-        
+    }
+
+    ## 2c) Verify existence of proper data files/structure
+    else {
         ## Checking for proper directory structure
-        basedir <- "./UCI Har Dataset"
+        basedir <- paste0(getwd(), "/UCI Har Dataset")
         testdir <- paste (basedir, "/test", sep="")
         print (basedir)
         traindir <- paste (basedir, "/train", sep ="")
@@ -54,19 +62,36 @@ mergeandtidy <- function (){
         else {
             message ("Found traindir")
         }
-            
+        ## to-do check for rest of data files, but good enough for now
+ 
+        
+        if (nchar(missingfiles) > 0) 
+            print (paste("ERROR: one or more data directories not present:", missingfiles, "."))
     }
     
+
+    ## 3) Read in raw data
+    test_data <- read.delim(paste0(testdir, "/X_test.txt"), header=FALSE, sep="")
+    test_activities <- read.delim(paste0(testdir, "/y_test.txt"), header=FALSE, sep="")
+    test_subjects <- read.delim(paste0(testdir, "/subject_test.txt"), header=FALSE, sep="")
+    
+    train_data <- read.delim(paste0(traindir, "/X_train.txt"), header=FALSE, sep="")
+    train_activities <- read.delim(paste0(traindir, "/y_test.txt"), header=FALSE, sep="")
+    train_subjects <- read.delim(paste0(traindir, "/subject_test.txt"), header=FALSE, sep="")
+    
+    column_names <- read.delim(paste0(basedir, "/features.txt"), header=FALSE, sep="")
+    activity_names <- read.delim(paste0(basedir, "/activity_labels.txt"), header=FALSE, sep="")
+    
+    ## 3a) Merge test and training sets
     
     
-    ## 2) look for data files
-    ## 2a) If not, download them
-    ## 2b) extract raw data files
-    ## 2c) Verify existence of proper data files/structure
-    ## 3) Merge test and training sets
-    ## 3a) Assign test/training from filename
-    ## 3b) Assign activity from y_xxxx.txt
-    ## 3c) Assign subject from subject_xxxx.txt
+    ## 3b) Assign test/training from filename
+    
+    
+    ## 3c) Assign activity from y_xxxx.txt
+    
+    
+    ## 3d) Assign subject from subject_xxxx.txt
     
 }    
 
