@@ -71,27 +71,60 @@ mergeandtidy <- function (){
     
 
     ## 3) Read in raw data
-    test_data <- read.delim(paste0(testdir, "/X_test.txt"), header=FALSE, sep="")
+    message ("Reading test data")
+    test_data <- read.delim(paste0(testdir, "/X_test.txt"), header=FALSE, sep="", na.strings = "-1.0000000e+000")
+    message ("Reading test activities")
     test_activities <- read.delim(paste0(testdir, "/y_test.txt"), header=FALSE, sep="")
+    message ("Reading test subjects")
     test_subjects <- read.delim(paste0(testdir, "/subject_test.txt"), header=FALSE, sep="")
     
-    train_data <- read.delim(paste0(traindir, "/X_train.txt"), header=FALSE, sep="")
-    train_activities <- read.delim(paste0(traindir, "/y_test.txt"), header=FALSE, sep="")
-    train_subjects <- read.delim(paste0(traindir, "/subject_test.txt"), header=FALSE, sep="")
+    message ("Reading training data")
+    train_data <- read.delim(paste0(traindir, "/X_train.txt"), header=FALSE, sep="", na.strings = "-1.0000000e+000")
+    message ("Reading training activities")
+    train_activities <- read.delim(paste0(traindir, "/y_train.txt"), header=FALSE, sep="")
+    message ("Reading training subjects")
+    train_subjects <- read.delim(paste0(traindir, "/subject_train.txt"), header=FALSE, sep="")
     
-    column_names <- read.delim(paste0(basedir, "/features.txt"), header=FALSE, sep="")
+    message ("Reading column names")
+    column_names <- read.delim(paste0(basedir, "/features.txt"), header=FALSE, sep="", stringsAsFactors = FALSE)
+    mycolumn_names <- column_names[,2]
+    mycolumn_names <- c("Subject", "Activity", mycolumn_names)
+    message ("Reading activity names")
     activity_names <- read.delim(paste0(basedir, "/activity_labels.txt"), header=FALSE, sep="")
     
-    ## 3a) Merge test and training sets
+
+    ## 3a) Assign test/training from filename
+    message ("Reading activity names")
+    test_data <- cbind( c(rep("test", dim (test_data)[1])), test_data)
+    train_data <- cbind( c(rep("train", dim (train_data)[1])), train_data)
     
     
-    ## 3b) Assign test/training from filename
+    
+    ## 3b) Assign activity from y_xxxx.txt
+    message ("Assigning activity from y_xxxx.txt")
+    train_data <- cbind( train_activities, train_data)
+    test_data <- cbind( test_activities, test_data)
     
     
-    ## 3c) Assign activity from y_xxxx.txt
+    ## 3dc) Assign subject from subject_xxxx.txt
+    message ("Assigning subject from subject_xxxx.txt")
+    train_data <- cbind( train_subjects, train_data)
+    test_data <- cbind( test_subjects, test_data)
     
     
-    ## 3d) Assign subject from subject_xxxx.txt
+    ## 3d) Assign column names from features.txt
+    message ("Assigning column names from features.txt")
+    column_names(train_data) <- mycolumn_names
+    column_names(test_data) <- mycolumn_names
+    
+    ## 3e) Merge test and training sets
+    message ("Merge test and training sets")
+    all_data <- rbind(test_data, train_data)
+    
+    ##head(str(alldata))
+    message ("Writing output tidy data")
+    write.csv(all_data, file = "./all_data.csv")
+    ##head(str(train_data))
     
 }    
 

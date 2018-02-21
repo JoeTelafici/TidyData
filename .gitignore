@@ -1,3 +1,6 @@
 
 *.txt
 ucihardata.zip
+.RData
+.Rhistory
+all_data.csv
