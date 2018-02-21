@@ -124,7 +124,7 @@ mergeandtidy <- function (){
     ## Replacing activity names
     
     message ("Merging Activity Names")
-    all_data<-merge(activity_names, all_data, by.x="Activity", by.y = "Activity")
+    all_data<-merge(activity_names, all_data, by.x="Activity", by.y = "Activity", sort=FALSE)
     
     message ("Writing output tidy data")
     write.csv(all_data, file = "./all_data.csv")
