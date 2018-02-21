@@ -88,11 +88,11 @@ mergeandtidy <- function (){
     message ("Reading column names")
     column_names <- read.delim(paste0(basedir, "/features.txt"), header=FALSE, sep="", stringsAsFactors = FALSE)
     mycolumn_names <- column_names[,2]
-    mycolumn_names <- c("Subject", "Activity", mycolumn_names)
+    mycolumn_names <- c("Subject", "Activity", "DataSubset", mycolumn_names)
     message ("Reading activity names")
     activity_names <- read.delim(paste0(basedir, "/activity_labels.txt"), header=FALSE, sep="")
+    colnames(activity_names) <- c("Activity", "ActivityName")
     
-
     ## 3a) Assign test/training from filename
     message ("Reading activity names")
     test_data <- cbind( c(rep("test", dim (test_data)[1])), test_data)
@@ -114,18 +114,20 @@ mergeandtidy <- function (){
     
     ## 3d) Assign column names from features.txt
     message ("Assigning column names from features.txt")
-    column_names(train_data) <- mycolumn_names
-    column_names(test_data) <- mycolumn_names
+    colnames(train_data) <- mycolumn_names
+    colnames(test_data) <- mycolumn_names
     
     ## 3e) Merge test and training sets
     message ("Merge test and training sets")
     all_data <- rbind(test_data, train_data)
     
-    ##head(str(alldata))
+    ## Replacing activity names
+    
+    message ("Merging Activity Names")
+    all_data<-merge(activity_names, all_data, by.x="Activity", by.y = "Activity")
+    
     message ("Writing output tidy data")
     write.csv(all_data, file = "./all_data.csv")
-    ##head(str(train_data))
-    
 }    
 
 
