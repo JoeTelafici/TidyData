@@ -121,18 +121,33 @@ mergeandtidy <- function (){
     message ("Merge test and training sets")
     all_data <- rbind(test_data, train_data)
     
+    
     ## Replacing activity names
     
     message ("Merging Activity Names")
     all_data<-merge(activity_names, all_data, by.x="Activity", by.y = "Activity", sort=FALSE)
     
+    ## 3e) Toss irrelevant columns
+    all_data <- all_data[, c("DataSubset", "ActivityName", "Subject", c(grep("mean|std", colnames(all_data), value = TRUE)))]
+    
+    
     message ("Writing output tidy data")
     write.csv(all_data, file = "./all_data.csv")
+    
+    ##head(foo[, grep("mean|std", colnames(foo))])
+    calculate_means("./all_data.csv")
 }    
 
 
 calculate_means <- function (datafile) {
 
     ## 4) Create subset of tidy data consisting of means of each measurement per activity and per subject
+    library(reshape2)
+    library(dplyr)
+    
+    all_data<-tbl_df (read.csv(datafile))
+    melted<-melt (all_data, id.vars =c("ActivityName", "Subject", "DataSubset"), measure.vars=c(grep("mean|std", colnames(all_data))), na.rm=TRUE)
+    final_subset<-dcast(melted, Subject + ActivityName ~ variable, mean)
+    write.csv(final_subset, file = "./final_subset.csv")
 
 }
