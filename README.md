@@ -52,6 +52,6 @@ I check for the first two levels of subfolders in the .zip archive: "./UCI HAR D
 	
 ## Create subset of tidy data consisting of means of each measurement per activity and per subject
 
-### Melt the resulting data set down preserving the activity and subject and test|train.  Toss the NA values (see Assumptions above)
-### Use DCast to generate a mean for each combination of activity and subject
-### Write out the data to a file ("./calculated means.csv")
+*###* Melt the resulting data set down preserving the activity and subject and test|train.  Toss the NA values (see Assumptions above)
+*###* Use DCast to generate a mean for each combination of activity and subject
+*###* Write out the data to a file ("./calculated means.csv")
