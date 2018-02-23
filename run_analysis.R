@@ -15,13 +15,12 @@
 ## Available at https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
 
-## 1) look for working directory and create if not exist
 
 mergeandtidy <- function (){
-    ## 2) look for data files
+    ## look for data files
     if (!file.exists("./UCI HAR Dataset")) {
         
-        ## 2a) If not, download them
+        ## If not, download them
         message ("Data directory not found ...  Downloading and extracting raw data")
         if (download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./ucihardata.zip", mode = "wb")){
             message ("Could not not download data file ... exiting")
@@ -29,14 +28,14 @@ mergeandtidy <- function (){
         }
     
         
-        ## 2b) extract raw data files
+        ## extract raw data files
         else {
             message ("Extracting data...")
             unzip ("./ucihardata.zip")
         }
     }
 
-    ## 2c) Verify existence of proper data files/structure
+    ## Verify existence of proper data files/structure
     else {
         ## Checking for proper directory structure
         basedir <- paste0(getwd(), "/UCI Har Dataset")
@@ -70,8 +69,11 @@ mergeandtidy <- function (){
     }
     
 
-    ## 3) Read in raw data
+    ## Read in raw data
+    
     message ("Reading test data")
+    
+    ## Assume all exact -1 values are NA.  May not be true, but unlikely in electrical measurements.  See Readme.md
     test_data <- read.delim(paste0(testdir, "/X_test.txt"), header=FALSE, sep="", na.strings = "-1.0000000e+000")
     message ("Reading test activities")
     test_activities <- read.delim(paste0(testdir, "/y_test.txt"), header=FALSE, sep="")
@@ -79,9 +81,13 @@ mergeandtidy <- function (){
     test_subjects <- read.delim(paste0(testdir, "/subject_test.txt"), header=FALSE, sep="")
     
     message ("Reading training data")
+    
+    ## Assume all exact -1 values are NA.  May not be true, but unlikely in electrical measurements.  See Readme.md
     train_data <- read.delim(paste0(traindir, "/X_train.txt"), header=FALSE, sep="", na.strings = "-1.0000000e+000")
+    
     message ("Reading training activities")
     train_activities <- read.delim(paste0(traindir, "/y_train.txt"), header=FALSE, sep="")
+    
     message ("Reading training subjects")
     train_subjects <- read.delim(paste0(traindir, "/subject_train.txt"), header=FALSE, sep="")
     
@@ -93,61 +99,61 @@ mergeandtidy <- function (){
     activity_names <- read.delim(paste0(basedir, "/activity_labels.txt"), header=FALSE, sep="")
     colnames(activity_names) <- c("Activity", "ActivityName")
     
-    ## 3a) Assign test/training from filename
+    ## Assign test/training from filename
     message ("Reading activity names")
     test_data <- cbind( c(rep("test", dim (test_data)[1])), test_data)
     train_data <- cbind( c(rep("train", dim (train_data)[1])), train_data)
     
-    
-    
-    ## 3b) Assign activity from y_xxxx.txt
+    ## Assign activity from y_xxxx.txt
     message ("Assigning activity from y_xxxx.txt")
     train_data <- cbind( train_activities, train_data)
     test_data <- cbind( test_activities, test_data)
     
-    
-    ## 3dc) Assign subject from subject_xxxx.txt
+    ## Assign subject from subject_xxxx.txt
     message ("Assigning subject from subject_xxxx.txt")
     train_data <- cbind( train_subjects, train_data)
     test_data <- cbind( test_subjects, test_data)
     
-    
-    ## 3d) Assign column names from features.txt
+    ## Assign column names from features.txt
     message ("Assigning column names from features.txt")
     colnames(train_data) <- mycolumn_names
     colnames(test_data) <- mycolumn_names
     
-    ## 3e) Merge test and training sets
+    ## Merge test and training sets
     message ("Merge test and training sets")
     all_data <- rbind(test_data, train_data)
     
-    
     ## Replacing activity names
-    
     message ("Merging Activity Names")
     all_data<-merge(activity_names, all_data, by.x="Activity", by.y = "Activity", sort=FALSE)
     
-    ## 3e) Toss irrelevant columns
+    ## Toss irrelevant columns
     all_data <- all_data[, c("DataSubset", "ActivityName", "Subject", c(grep("mean|std", colnames(all_data), value = TRUE)))]
     
+    ## write out combined & tidied original data set
+    message (paste0("Writing full tidy data file to ", getwd(), "/all_data.csv"))
+    write.csv(all_data, file = "./all_data.csv", row.names=FALSE)
     
-    message ("Writing output tidy data")
-    write.csv(all_data, file = "./all_data.csv")
-    
-    ##head(foo[, grep("mean|std", colnames(foo))])
-    calculate_means("./all_data.csv")
+    ## generate means of combined & tidied data variables per subject and activity
+    calculate_means(all_data)
 }    
 
 
-calculate_means <- function (datafile) {
+calculate_means <- function (datatbl) {
 
-    ## 4) Create subset of tidy data consisting of means of each measurement per activity and per subject
+    ## Attempt to load necessary libraries
     library(reshape2)
     library(dplyr)
     
-    all_data<-tbl_df (read.csv(datafile))
-    melted<-melt (all_data, id.vars =c("ActivityName", "Subject", "DataSubset"), measure.vars=c(grep("mean|std", colnames(all_data))), na.rm=TRUE)
+    ## Create subset of tidy data consisting of means of each measurement per activity and per subject
+    message ("Melting data")
+    melted<-melt (datatbl, id.vars =c("ActivityName", "Subject", "DataSubset"), measure.vars=c(grep("mean|std", colnames(datatbl))), na.rm=TRUE)
+    
+    message ("Casting data")
     final_subset<-dcast(melted, Subject + ActivityName ~ variable, mean)
-    write.csv(final_subset, file = "./final_subset.csv")
+    
+    ## Write out final tidy data set
+    message (paste0("Writing mean data file to ", getwd(), "/calculated means.csv"))
+    write.csv(final_subset, file = "./calculated means.csv", row.names=FALSE)
 
 }
