@@ -12,7 +12,7 @@ I assume that values of -1.00000000 are NA values.  Not explicitly stated in the
 
 ### xYYY-MeanFreq variables
 
-Unclear from the project description whether the variables ending in mean or _including_ mean were meant to be included in the final tidy data set.  I included them as it's easier to ignore them then to recreate them if not present.
+Unclear from the project description whether the variables ending in mean or _including_ mean were meant to be included in the final tidy data set, for example the *-meanFreq() fields.  I included them as it's easier to ignore them then to recreate them if not present.
 
 ## Script outline
 
