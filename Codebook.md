@@ -40,7 +40,7 @@ The activity being performed by the subject during the measurement.  Possible va
 
 ##*Measurements*
 
-Measurements from the gyroscope and accelerometer on Android devices are described here: https://developer.android.com/guide/topics/sensors/sensors_motion.html.  In short, the accelerometer measures the rate of change of position along the X, Y or Z access, the gravitometer measures the direction of gravitational force in a 3D vector (i.e. which way is up).  The gyroscope measures rotational force on the phone along the 3 axes (pitch, roll, yaw)
+Measurements from the gravitometer, gyroscope and accelerometer on Android devices are described here: https://developer.android.com/guide/topics/sensors/sensors_motion.html.  In short, the accelerometer measures the rate of change of position along the X, Y or Z access, the gravitometer measures the direction of gravitational force in a 3D vector (i.e. which way is up).  The gyroscope measures rotational force on the phone along the 3 axes (pitch, roll, yaw).   All measures are reported as numeric values of up to 8 signficant digits, generally between -1 and 1.
 
 ### tBodyAcc-mean()-X
 
@@ -360,22 +360,3 @@ Frequency domain - Gyroscope body jerk magnitude - mean frequency
 
 
 
-###Variable 1 (repeat this section for all variables in the dataset)
-Short description of what the variable describes.
-
-Some information on the variable including:
- - Class of the variable
- - Unique values/levels of the variable
- - Unit of measurement (if no unit of measurement list this as well)
- - In case names follow some schema, describe how entries were constructed (for example time-body-gyroscope-z has 4 levels of descriptors. Describe these 4 levels). 
-
-(you can easily use Rcode for this, just load the dataset and provide the information directly form the tidy data file)
-
-####Notes on variable 1:
-If available, some additional notes on the variable not covered elsewehere. If no notes are present leave this section out.
-
-##Sources
-Sources you used if any, otherise leave out.
-
-##Annex
-If you used any code in the codebook that had the echo=FALSE attribute post this here (make sure you set the results parameter to 'hide' as you do not want the results to show again)
